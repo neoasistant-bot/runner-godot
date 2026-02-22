@@ -13,13 +13,13 @@ kanban-plugin: board
 
 ## Tareas
 
-- [ ] T15: Main Menu screen (play, XP, high score) #ui #prioridad-media
-- [ ] T16: Game Over screen (XP, retry, menu) #ui #prioridad-media
 - [ ] T17: Integracion completa - primer jugable #sistema #gameplay #prioridad-alta
 - [ ] T18: Configuracion y export Android #android #prioridad-baja
 
 
 ## En Curso
+
+- [ ] T16: Game Over screen (XP, retry, menu) #ui #prioridad-media
 
 
 
@@ -45,6 +45,7 @@ kanban-plugin: board
 - [x] T12: TransitionManager autoload (seleccion aleatoria de niveles) #sistema #prioridad-media
 - [x] T13: Level scene (ensamblar todos los sistemas) #sistema #prioridad-alta
 - [x] T14: Main scene (root persistente con lifecycle de niveles) #sistema #prioridad-alta
+- [x] T15: Main Menu screen (play, XP, high score) #ui #prioridad-media
 
 
 
