@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="LevelData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/level_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+level_name = "Hellevator"
+scroll_direction = Vector2(0, 1)
+dodge_direction = Vector2(1, 0)
+base_speed = 350.0
+base_distance = 2500.0
+distance_scale_per_xp = 6.0
+gravity_enabled = false
+gravity_direction = Vector2(0, 0)
+coin_frequency = 180.0
+coin_value = 15
+obstacle_min_gap = 350.0
+obstacle_max_gap = 600.0
+ground_color = Color(0.3, 0.15, 0.1, 1)
+bg_color = Color(0.15, 0.05, 0.0, 1)
+obstacle_color = Color(0.9, 0.3, 0.0, 1)
+level_complete_bonus = 75
