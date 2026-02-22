@@ -1,7 +1,25 @@
 [gd_scene format=3 uid="uid://dan252rh3ueeo"]
 
-[node name="Gane" type="Node2D" unique_id=1942020794]
+[ext_resource type="PackedScene" uid="uid://bxuspcg0f6bb3" path="res://scenes/player.tscn" id="1_fcrts"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_tiw57"]
+
+[node name="Game" type="Node2D" unique_id=1942020794]
 
 [node name="World" type="Node2D" parent="." unique_id=84329465]
+
+[node name="Ground" type="StaticBody2D" parent="World" unique_id=773793891]
+position = Vector2(0, 500)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Ground" unique_id=1795967506]
+shape = SubResource("WorldBoundaryShape2D_tiw57")
+
+[node name="ColorRect" type="ColorRect" parent="World/Ground" unique_id=2049107808]
+offset_right = 1920.0
+offset_bottom = 200.0
+color = Color(0, 0.5529412, 0, 1)
+
+[node name="Player" parent="." unique_id=1167785588 instance=ExtResource("1_fcrts")]
+position = Vector2(200, 300)
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=1321891948]
