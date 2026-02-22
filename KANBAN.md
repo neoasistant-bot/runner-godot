@@ -13,7 +13,6 @@ kanban-plugin: board
 
 ## Tareas
 
-- [ ] T6: Player scene con sprite Kenney y dual-mode (horizontal/vertical) #gameplay #arte #prioridad-alta
 - [ ] T7: WorldScroller con Vector2 direccional #world #prioridad-alta
 - [ ] T8: TerrainManager con reciclado por eje #world #arte #prioridad-alta
 - [ ] T9: Obstacle scene y ObstacleSpawner axis-aware #gameplay #sistema #prioridad-alta
@@ -30,7 +29,7 @@ kanban-plugin: board
 
 ## En Curso
 
-- [ ] T5: SwipeDetector autoload (4 direcciones + teclado) #input #prioridad-alta
+- [ ] T6: Player scene con sprite Kenney y dual-mode (horizontal/vertical) #gameplay #arte #prioridad-alta
 
 ## En Prueba
 
@@ -38,6 +37,7 @@ kanban-plugin: board
 - [ ] T2: Crear LevelData Resource class #sistema #prioridad-alta
 - [ ] T3: Crear 4 archivos de nivel (.tres) - Rio, Plataforma, Hellevator, Abduccion #sistema #prioridad-alta
 - [ ] T4: GameManager autoload (XP, estado, save/load) #sistema #prioridad-alta
+- [ ] T5: SwipeDetector autoload (4 direcciones + teclado) #input #prioridad-alta
 
 
 ## Finalizada
