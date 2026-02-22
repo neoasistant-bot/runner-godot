@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 GameManager="*res://scripts/game_manager.gd"
 SwipeDetector="*res://scripts/swipe_detector.gd"
+TransitionManager="*res://scripts/transition_manager.gd"
 
 [display]
 

@@ -13,12 +13,6 @@ kanban-plugin: board
 
 ## Tareas
 
-- [ ] T7: WorldScroller con Vector2 direccional #world #prioridad-alta
-- [ ] T8: TerrainManager con reciclado por eje #world #arte #prioridad-alta
-- [ ] T9: Obstacle scene y ObstacleSpawner axis-aware #gameplay #sistema #prioridad-alta
-- [ ] T10: Coin scene y CoinSpawner axis-aware #gameplay #sistema #prioridad-alta
-- [ ] T11: Teleporter scene para transiciones de nivel #gameplay #sistema #prioridad-media
-- [ ] T12: TransitionManager autoload (seleccion aleatoria de niveles) #sistema #prioridad-media
 - [ ] T13: Level scene (ensamblar todos los sistemas) #sistema #prioridad-alta
 - [ ] T14: Main scene (root persistente con lifecycle de niveles) #sistema #prioridad-alta
 - [ ] T15: Main Menu screen (play, XP, high score) #ui #prioridad-media
@@ -29,7 +23,8 @@ kanban-plugin: board
 
 ## En Curso
 
-- [ ] T6: Player scene con sprite Kenney y dual-mode (horizontal/vertical) #gameplay #arte #prioridad-alta
+- [ ] T11: Teleporter scene para transiciones de nivel #gameplay #sistema #prioridad-media
+- [ ] T12: TransitionManager autoload (seleccion aleatoria de niveles) #sistema #prioridad-media
 
 ## En Prueba
 
@@ -38,6 +33,11 @@ kanban-plugin: board
 - [ ] T3: Crear 4 archivos de nivel (.tres) - Rio, Plataforma, Hellevator, Abduccion #sistema #prioridad-alta
 - [ ] T4: GameManager autoload (XP, estado, save/load) #sistema #prioridad-alta
 - [ ] T5: SwipeDetector autoload (4 direcciones + teclado) #input #prioridad-alta
+- [ ] T6: Player scene con sprite Kenney y dual-mode (horizontal/vertical) #gameplay #arte #prioridad-alta
+- [ ] T7: WorldScroller con Vector2 direccional #world #prioridad-alta
+- [ ] T8: TerrainManager con reciclado por eje #world #arte #prioridad-alta
+- [ ] T9: Obstacle scene y ObstacleSpawner axis-aware #gameplay #sistema #prioridad-alta
+- [ ] T10: Coin scene y CoinSpawner axis-aware #gameplay #sistema #prioridad-alta
 
 
 ## Finalizada
