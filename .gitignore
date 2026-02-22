@@ -7,6 +7,15 @@
 *.log
 export_presets.cfg
 
+# Godot UID files (auto-generated)
+*.uid
+
+# Build output
+build/
+
 # OS
 Thumbs.db
 .DS_Store
+
+# Obsidian
+.obsidian/

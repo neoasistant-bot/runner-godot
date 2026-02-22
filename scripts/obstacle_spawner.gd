@@ -14,8 +14,8 @@ var _current_max_gap: float = 700.0
 func configure(data: LevelData) -> void:
 	_level_data = data
 	_viewport_size = get_viewport_rect().size
-	_current_min_gap = GameManager.calculate_obstacle_gap(data.obstacle_min_gap, data.obstacle_max_gap)
-	_current_max_gap = data.obstacle_max_gap
+	_current_min_gap = data.obstacle_min_gap
+	_current_max_gap = GameManager.calculate_obstacle_gap(data.obstacle_min_gap, data.obstacle_max_gap)
 	_next_spawn_distance = randf_range(_current_min_gap, _current_max_gap)
 	_distance_since_last = 0.0
 
@@ -56,7 +56,7 @@ func _spawn_obstacle() -> void:
 	var obs: Area2D = obstacle_scene.instantiate()
 	var spawn_pos: Vector2 = _calculate_spawn_position()
 	obs.position = spawn_pos
-	obs.setup(_level_data.obstacle_color, Vector2(32, 32))
+	obs.setup(_level_data.obstacle_color, Vector2(64, 64))
 
 	_obstacles.append(obs)
 	add_child(obs)

@@ -19,6 +19,10 @@ func configure(data: LevelData) -> void:
 		$CollisionShape2D.shape = RectangleShape2D.new()
 		$CollisionShape2D.shape.size = Vector2(396, 60)
 
+## Move with the world scroll so the player can reach us
+func scroll(movement: Vector2) -> void:
+	position += movement
+
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		activated.emit()

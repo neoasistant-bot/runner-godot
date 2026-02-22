@@ -74,6 +74,14 @@ func _ready() -> void:
 	tween.tween_interval(2.0)
 	tween.tween_property(level_name_label, "modulate:a", 0.0, 0.5)
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		# ESC pressed — stop the game and go back to menu
+		world.stop()
+		obstacle_spawner.stop()
+		coin_spawner.stop()
+		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
 func _on_distance_updated(total: float) -> void:
 	distance_bar.value = min(total, level_distance)
 
