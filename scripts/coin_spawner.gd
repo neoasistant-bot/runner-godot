@@ -22,12 +22,7 @@ func stop() -> void:
 	_is_active = false
 
 func scroll(movement: Vector2) -> void:
-	if not _is_active:
-		return
-
-	_distance_since_last += movement.length()
-
-	# Move existing coins
+	# Always move existing coins, even when spawning is stopped
 	var to_remove: Array[int] = []
 	for i in _coins.size():
 		if is_instance_valid(_coins[i]):
@@ -42,7 +37,12 @@ func scroll(movement: Vector2) -> void:
 			_coins[to_remove[i]].queue_free()
 		_coins.remove_at(to_remove[i])
 
-	# Spawn new
+	# Only accumulate distance and spawn when active
+	if not _is_active:
+		return
+
+	_distance_since_last += movement.length()
+
 	if _distance_since_last >= _next_spawn_distance:
 		_spawn_coin()
 		_distance_since_last = 0.0

@@ -17,6 +17,6 @@ coin_value = 15
 obstacle_min_gap = 350.0
 obstacle_max_gap = 600.0
 ground_color = Color(0.3, 0.15, 0.1, 1)
-bg_color = Color(0.15, 0.05, 0.0, 1)
+bg_color = Color(0.25, 0.12, 0.08, 1)
 obstacle_color = Color(0.9, 0.3, 0.0, 1)
 level_complete_bonus = 75

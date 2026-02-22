@@ -56,9 +56,6 @@ func _ready() -> void:
 			# Abducción: world scrolls down, player near bottom
 			player.position = Vector2(viewport_size.x / 2.0, viewport_size.y - 250)
 	player.configure(level_data)
-	print("[Level] player pos=%s level=%s dir=%s" % [
-		str(player.position), level_data.level_name, str(level_data.scroll_direction)
-	])
 
 	# Setup world systems
 	world.configure(level_data)
