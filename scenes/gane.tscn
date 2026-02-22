@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://dan252rh3ueeo"]
+
+[node name="Gane" type="Node2D" unique_id=1942020794]
+
+[node name="World" type="Node2D" parent="." unique_id=84329465]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1321891948]
