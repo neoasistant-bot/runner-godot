@@ -2,9 +2,11 @@ extends CharacterBody2D
 
 const GRAVITY_FORCE: float = 1200.0
 const JUMP_VELOCITY: float = -500.0
-const CROUCH_DURATION: float = 0.5
-const LANE_POSITIONS: Array[float] = [-150.0, 0.0, 150.0]
+const CROUCH_DURATION: float = 1.0
+const LANE_OFFSETS: Array[float] = [-150.0, 0.0, 150.0]
 const LANE_TWEEN_SPEED: float = 0.15
+const SPRITE_STAND_SCALE: Vector2 = Vector2(4, 4)
+const SPRITE_CROUCH_SCALE: Vector2 = Vector2(4, 2)
 
 enum Mode { HORIZONTAL, VERTICAL }
 enum State { RUNNING, JUMPING, CROUCHING, DODGING, DEAD }
@@ -15,6 +17,7 @@ var level_data: LevelData
 
 var _crouch_timer: float = 0.0
 var _current_lane: int = 1
+var _lane_center_x: float = 0.0
 var _dodge_positive_connected: bool = false
 var _dodge_negative_connected: bool = false
 
@@ -25,6 +28,8 @@ func configure(data: LevelData) -> void:
 		_connect_horizontal_input()
 	else:
 		mode = Mode.VERTICAL
+		_lane_center_x = position.x
+		_current_lane = 1
 		_connect_vertical_input()
 
 func _connect_horizontal_input() -> void:
@@ -95,6 +100,10 @@ func _crouch() -> void:
 	if is_on_floor() and current_state == State.RUNNING:
 		current_state = State.CROUCHING
 		_crouch_timer = CROUCH_DURATION
+		# Visual feedback: squish the sprite vertically
+		$Sprite2D.scale = SPRITE_CROUCH_SCALE
+		$Sprite2D.position.y = 18.0
+		# Swap collision shapes
 		$StandingCollision.disabled = true
 		$CrouchingCollision.disabled = false
 		$HitboxArea/HitboxStanding.disabled = true
@@ -102,19 +111,24 @@ func _crouch() -> void:
 
 func _stand_up() -> void:
 	current_state = State.RUNNING
+	# Restore sprite
+	$Sprite2D.scale = SPRITE_STAND_SCALE
+	$Sprite2D.position.y = 0.0
+	# Restore collision shapes
 	$StandingCollision.disabled = false
 	$CrouchingCollision.disabled = true
 	$HitboxArea/HitboxStanding.disabled = false
 	$HitboxArea/HitboxCrouching.disabled = true
 
 func _move_to_lane(target_lane: int) -> void:
-	target_lane = clampi(target_lane, 0, LANE_POSITIONS.size() - 1)
+	target_lane = clampi(target_lane, 0, LANE_OFFSETS.size() - 1)
 	if target_lane == _current_lane:
 		return
 	_current_lane = target_lane
 	current_state = State.DODGING
 
-	var target_x: float = LANE_POSITIONS[_current_lane]
+	# Lanes are relative offsets from the center position
+	var target_x: float = _lane_center_x + LANE_OFFSETS[_current_lane]
 	var tween := create_tween()
 	tween.tween_property(self, "position:x", target_x, LANE_TWEEN_SPEED)
 	tween.tween_callback(func(): current_state = State.RUNNING)

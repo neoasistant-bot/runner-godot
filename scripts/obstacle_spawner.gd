@@ -10,6 +10,7 @@ var _obstacles: Array[Area2D] = []
 var _is_active: bool = false
 var _current_min_gap: float = 400.0
 var _current_max_gap: float = 700.0
+var _debug_scroll_calls: int = 0
 
 func configure(data: LevelData) -> void:
 	_level_data = data
@@ -18,9 +19,14 @@ func configure(data: LevelData) -> void:
 	_current_max_gap = GameManager.calculate_obstacle_gap(data.obstacle_min_gap, data.obstacle_max_gap)
 	_next_spawn_distance = randf_range(_current_min_gap, _current_max_gap)
 	_distance_since_last = 0.0
+	print("[ObstacleSpawner] configure: min_gap=%.0f max_gap=%.0f next_spawn=%.0f scene=%s" % [
+		_current_min_gap, _current_max_gap, _next_spawn_distance,
+		str(obstacle_scene != null)
+	])
 
 func start() -> void:
 	_is_active = true
+	print("[ObstacleSpawner] start: _is_active=true")
 
 func stop() -> void:
 	_is_active = false
@@ -30,6 +36,13 @@ func scroll(movement: Vector2) -> void:
 		return
 
 	_distance_since_last += movement.length()
+	_debug_scroll_calls += 1
+
+	if _debug_scroll_calls <= 5 or _debug_scroll_calls % 300 == 0:
+		print("[ObstacleSpawner] scroll #%d: dist=%.0f/%.0f obstacles=%d movement=%s" % [
+			_debug_scroll_calls, _distance_since_last, _next_spawn_distance,
+			_obstacles.size(), str(movement)
+		])
 
 	# Move existing obstacles
 	var to_remove: Array[int] = []
@@ -51,6 +64,7 @@ func scroll(movement: Vector2) -> void:
 
 func _spawn_obstacle() -> void:
 	if not obstacle_scene:
+		print("[ObstacleSpawner] ERROR: obstacle_scene is null!")
 		return
 
 	var obs: Area2D = obstacle_scene.instantiate()
@@ -60,6 +74,9 @@ func _spawn_obstacle() -> void:
 
 	_obstacles.append(obs)
 	add_child(obs)
+	print("[ObstacleSpawner] SPAWNED obstacle at %s (total: %d)" % [
+		str(spawn_pos), _obstacles.size()
+	])
 
 func _calculate_spawn_position() -> Vector2:
 	var spawn_offset: Vector2 = _level_data.get_spawn_offset(_viewport_size)

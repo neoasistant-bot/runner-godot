@@ -39,13 +39,26 @@ func _ready() -> void:
 		ground.position = Vector2(0, -9999)
 		ground.visible = false
 
-	# Setup player
+	# Setup player — position depends on scroll direction
 	player.add_to_group("player")
 	if level_data.is_horizontal():
-		player.position = Vector2(200, viewport_size.y - 150)
+		if level_data.scroll_direction.x > 0:
+			# Río: world scrolls left, player on left side
+			player.position = Vector2(200, viewport_size.y - 150)
+		else:
+			# Plataforma: world scrolls right, player on right side
+			player.position = Vector2(viewport_size.x - 200, viewport_size.y - 150)
 	else:
-		player.position = Vector2(viewport_size.x / 2.0, viewport_size.y / 2.0)
+		if level_data.scroll_direction.y > 0:
+			# Hellevator: world scrolls up, player near top
+			player.position = Vector2(viewport_size.x / 2.0, 250)
+		else:
+			# Abducción: world scrolls down, player near bottom
+			player.position = Vector2(viewport_size.x / 2.0, viewport_size.y - 250)
 	player.configure(level_data)
+	print("[Level] player pos=%s level=%s dir=%s" % [
+		str(player.position), level_data.level_name, str(level_data.scroll_direction)
+	])
 
 	# Setup world systems
 	world.configure(level_data)
