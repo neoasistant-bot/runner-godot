@@ -35,9 +35,11 @@ func _ready() -> void:
 	if level_data.gravity_enabled:
 		ground.position = Vector2(0, viewport_size.y - 100)
 		ground.visible = true
+		ground.get_node("CollisionShape2D").disabled = false
 	else:
-		ground.position = Vector2(0, -9999)
+		# Disable ground collision entirely for vertical levels
 		ground.visible = false
+		ground.get_node("CollisionShape2D").disabled = true
 
 	# Setup player — position depends on scroll direction
 	player.add_to_group("player")

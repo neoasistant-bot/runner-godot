@@ -53,10 +53,11 @@ func _physics_process(delta: float) -> void:
 	match mode:
 		Mode.HORIZONTAL:
 			_process_horizontal(delta)
+			move_and_slide()
 		Mode.VERTICAL:
 			_process_vertical(delta)
-
-	move_and_slide()
+			# No move_and_slide() in vertical mode — player moves via Tween only
+			# Obstacle detection uses HitboxArea (Area2D), not CharacterBody2D
 
 func _process_horizontal(delta: float) -> void:
 	if level_data and level_data.gravity_enabled and not is_on_floor():
