@@ -19,3 +19,6 @@ Thumbs.db
 
 # Obsidian
 .obsidian/
+
+# Claude Code (local settings, memory, session data — never commit)
+.claude/
