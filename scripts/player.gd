@@ -183,7 +183,36 @@ func die() -> void:
 	current_state = State.DEAD
 	set_physics_process(false)
 	_disconnect_all_signals()
+	
+	# Death animation
+	_play_death_effect()
+	
 	GameManager.end_game()
+
+func _play_death_effect() -> void:
+	# Flash red and fade out
+	var sprite := $Sprite2D
+	var original_pos := position
+	
+	# Create death animation
+	var tween := create_tween()
+	
+	# Flash red 3 times
+	for i in range(3):
+		tween.tween_property(sprite, "modulate", Color.RED, 0.05)
+		tween.tween_property(sprite, "modulate", Color.WHITE, 0.05)
+	
+	# Shake effect
+	tween.set_parallel(true)
+	for i in range(6):
+		var offset := Vector2(randf_range(-8, 8), randf_range(-4, 4))
+		tween.tween_property(self, "position", original_pos + offset, 0.05)
+	
+	tween.set_parallel(false)
+	tween.tween_property(self, "position", original_pos, 0.05)
+	
+	# Fade out
+	tween.tween_property(sprite, "modulate:a", 0.3, 0.3)
 
 func _disconnect_all_signals() -> void:
 	if _dodge_positive_connected:
