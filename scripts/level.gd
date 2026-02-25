@@ -10,6 +10,11 @@ extends Node2D
 @onready var xp_label: Label = $UI/XPLabel
 @onready var distance_bar: ProgressBar = $UI/DistanceBar
 @onready var level_name_label: Label = $UI/LevelNameLabel
+@onready var score_label: Label = $UI/TopBar/ScoreContainer/ScoreLabel
+@onready var distance_label: Label = $UI/TopBar/DistanceContainer/DistanceLabel
+@onready var high_score_indicator: Label = $UI/HighScoreIndicator
+
+var _total_distance: float = 0.0
 
 var level_data: LevelData
 var level_distance: float = 0.0
@@ -70,6 +75,11 @@ func _ready() -> void:
 	distance_bar.value = 0
 	level_name_label.text = level_data.level_name
 	xp_label.text = "XP: %d" % GameManager.total_xp
+	score_label.text = "%d" % GameManager.session_xp
+	distance_label.text = "0m"
+	high_score_indicator.text = "★ HIGH SCORE: %d" % GameManager.high_score
+	if GameManager.high_score == 0:
+		high_score_indicator.visible = false
 
 	# Connect signals
 	world.distance_updated.connect(_on_distance_updated)
@@ -96,12 +106,29 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_distance_updated(total: float) -> void:
 	distance_bar.value = min(total, level_distance)
+	_total_distance = total
+	distance_label.text = "%dm" % int(total)
 
 	if total >= level_distance and not _teleporter_spawned:
 		_spawn_teleporter()
 
 func _on_xp_changed(new_xp: int) -> void:
 	xp_label.text = "XP: %d" % new_xp
+	score_label.text = "%d" % GameManager.session_xp
+	
+	# Check for new high score during gameplay
+	if GameManager.session_xp > GameManager.high_score and GameManager.high_score > 0:
+		_on_new_high_score()
+
+func _on_new_high_score() -> void:
+	# Flash the high score indicator
+	high_score_indicator.text = "★ NEW HIGH SCORE!"
+	high_score_indicator.visible = true
+	high_score_indicator.add_theme_color_override("font_color", Color.GOLD)
+	
+	var tween := create_tween()
+	tween.tween_property(high_score_indicator, "scale", Vector2(1.2, 1.2), 0.1)
+	tween.tween_property(high_score_indicator, "scale", Vector2(1.0, 1.0), 0.1)
 
 func _on_game_over() -> void:
 	world.stop()
