@@ -1,10 +1,14 @@
 extends CharacterBody2D
 
-const GRAVITY_FORCE: float = 1200.0
-const JUMP_VELOCITY: float = -500.0
-const CROUCH_DURATION: float = 1.0
+# Movement tuning - V1-01 Polish
+const GRAVITY_FORCE: float = 1400.0  # Increased for snappier feel
+const JUMP_VELOCITY: float = -580.0  # Adjusted for new gravity
+const CROUCH_DURATION: float = 0.6   # Shorter crouch for better gameplay
+const COYOTE_TIME: float = 0.1       # Grace period for jump after leaving ground
+const JUMP_BUFFER_TIME: float = 0.15 # Buffer for early jump input
+
 const LANE_OFFSETS: Array[float] = [-150.0, 0.0, 150.0]
-const LANE_TWEEN_SPEED: float = 0.15
+const LANE_TWEEN_SPEED: float = 0.12  # Slightly faster lane change
 const SPRITE_STAND_SCALE: Vector2 = Vector2(4, 4)
 const SPRITE_CROUCH_SCALE: Vector2 = Vector2(4, 2)
 
@@ -20,6 +24,11 @@ var _current_lane: int = 1
 var _lane_center_x: float = 0.0
 var _dodge_positive_connected: bool = false
 var _dodge_negative_connected: bool = false
+
+# Coyote time and jump buffer
+var _coyote_timer: float = 0.0
+var _jump_buffer_timer: float = 0.0
+var _was_on_floor: bool = true
 
 func configure(data: LevelData) -> void:
 	level_data = data
@@ -60,15 +69,35 @@ func _physics_process(delta: float) -> void:
 			# Obstacle detection uses HitboxArea (Area2D), not CharacterBody2D
 
 func _process_horizontal(delta: float) -> void:
-	if level_data and level_data.gravity_enabled and not is_on_floor():
+	var on_floor := is_on_floor()
+	
+	# Apply gravity
+	if level_data and level_data.gravity_enabled and not on_floor:
 		velocity.y += GRAVITY_FORCE * delta
+	
+	# Coyote time - allow jump shortly after leaving ground
+	if on_floor:
+		_coyote_timer = COYOTE_TIME
+		_was_on_floor = true
+	else:
+		if _was_on_floor:
+			_coyote_timer -= delta
+			if _coyote_timer <= 0:
+				_was_on_floor = false
+	
+	# Jump buffer - execute buffered jump when landing
+	if _jump_buffer_timer > 0:
+		_jump_buffer_timer -= delta
+		if on_floor and current_state != State.CROUCHING:
+			_execute_jump()
+			_jump_buffer_timer = 0.0
 
 	if current_state == State.CROUCHING:
 		_crouch_timer -= delta
 		if _crouch_timer <= 0:
 			_stand_up()
 
-	if current_state == State.JUMPING and is_on_floor():
+	if current_state == State.JUMPING and on_floor:
 		current_state = State.RUNNING
 
 func _process_vertical(_delta: float) -> void:
@@ -93,9 +122,23 @@ func _on_dodge_negative() -> void:
 			_move_to_lane(_current_lane - 1)
 
 func _jump() -> void:
-	if is_on_floor() and current_state != State.CROUCHING:
-		velocity.y = JUMP_VELOCITY
-		current_state = State.JUMPING
+	# Can jump if on floor OR within coyote time, and not crouching
+	if current_state == State.CROUCHING:
+		return
+	
+	var can_jump := is_on_floor() or (_coyote_timer > 0 and _was_on_floor)
+	
+	if can_jump:
+		_execute_jump()
+	else:
+		# Buffer the jump for when we land
+		_jump_buffer_timer = JUMP_BUFFER_TIME
+
+func _execute_jump() -> void:
+	velocity.y = JUMP_VELOCITY
+	current_state = State.JUMPING
+	_coyote_timer = 0.0  # Consume coyote time
+	_was_on_floor = false
 
 func _crouch() -> void:
 	if is_on_floor() and current_state == State.RUNNING:
