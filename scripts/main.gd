@@ -6,20 +6,44 @@ const LEVEL_SCENE: PackedScene = preload("res://scenes/level.tscn")
 @onready var ui_overlay: CanvasLayer = $UIOverlay
 
 var _current_level: Node2D
+var _fade_rect: ColorRect
 
 func _ready() -> void:
 	TransitionManager.level_ready.connect(_on_level_ready)
+	TransitionManager.transition_started.connect(_on_transition_started)
+	TransitionManager.transition_finished.connect(_on_transition_finished)
 	GameManager.game_over.connect(_on_game_over)
+
+	# Create fade overlay (starts transparent)
+	_fade_rect = ColorRect.new()
+	_fade_rect.color = Color(0, 0, 0, 0)
+	_fade_rect.size = get_viewport_rect().size
+	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui_overlay.add_child(_fade_rect)
+
 	# Auto-start when Main scene loads (coming from menu)
 	start_game()
 
 func start_game() -> void:
-	# Clear any existing UI overlays
+	# Clear any existing UI overlays (but keep fade rect)
 	for child in ui_overlay.get_children():
-		child.queue_free()
+		if child != _fade_rect:
+			child.queue_free()
 
 	GameManager.start_game()
 	TransitionManager.start_first_level()
+
+func _on_transition_started() -> void:
+	# Fade to black over 0.3s
+	if _fade_rect:
+		var tween := create_tween()
+		tween.tween_property(_fade_rect, "color:a", 1.0, 0.3)
+
+func _on_transition_finished() -> void:
+	# Fade from black over 0.3s
+	if _fade_rect:
+		var tween := create_tween()
+		tween.tween_property(_fade_rect, "color:a", 0.0, 0.3)
 
 func _on_level_ready(data: LevelData) -> void:
 	# Remove old level

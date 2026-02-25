@@ -6,7 +6,7 @@ signal transition_finished
 
 var available_levels: Array[LevelData] = []
 var current_level_data: LevelData
-var _last_level_index: int = -1
+var _current_index: int = -1
 
 func _ready() -> void:
 	available_levels = [
@@ -16,24 +16,24 @@ func _ready() -> void:
 		preload("res://data/level_abduccion.tres"),
 	]
 
-## Pick a random level (not the same as the last one)
+## Pick next level in fixed sequence: Río → Plataforma → Hellevator → Abducción → (loop)
 func pick_next_level() -> LevelData:
-	var index: int = randi_range(0, available_levels.size() - 1)
-	while index == _last_level_index and available_levels.size() > 1:
-		index = randi_range(0, available_levels.size() - 1)
-	_last_level_index = index
-	current_level_data = available_levels[index]
+	_current_index = (_current_index + 1) % available_levels.size()
+	current_level_data = available_levels[_current_index]
 	return current_level_data
 
-## Start transition to a new level
+## Start transition to the next level (with timing for fade effect)
 func transition_to_next() -> void:
 	transition_started.emit()
+	# Wait for fade-out animation in Main (0.4s) before swapping level
+	await get_tree().create_timer(0.4).timeout
 	var next_data: LevelData = pick_next_level()
-	await get_tree().create_timer(0.5).timeout
 	level_ready.emit(next_data)
+	# Give Main a frame to set up the new level, then signal fade-in
+	await get_tree().process_frame
 	transition_finished.emit()
 
-## Start the first level (no transition animation)
+## Start the first level (Río, no transition animation)
 func start_first_level() -> void:
 	var data: LevelData = pick_next_level()
 	level_ready.emit(data)
