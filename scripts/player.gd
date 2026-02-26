@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
 # Movement tuning - V1-01 Polish
-const GRAVITY_FORCE: float = 1400.0  # Increased for snappier feel
-const JUMP_VELOCITY: float = -580.0  # Adjusted for new gravity
+const GRAVITY_FORCE: float = 2200.0  # Más gravity = caída más rápida
+const JUMP_VELOCITY: float = -780.0  # Más fuerza para compensar gravity
 const CROUCH_DURATION: float = 0.6   # Shorter crouch for better gameplay
 const COYOTE_TIME: float = 0.1       # Grace period for jump after leaving ground
 const JUMP_BUFFER_TIME: float = 0.15 # Buffer for early jump input

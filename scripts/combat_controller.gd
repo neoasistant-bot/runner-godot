@@ -108,33 +108,28 @@ func _try_ranged_attack() -> void:
 
 func _spawn_melee_attack() -> void:
 	var attack: MeleeAttack = melee_attack_scene.instantiate()
-	
-	# Position in front of player based on direction
-	var offset := Vector2(60, 0)
+
+	# Los enemigos vienen en dirección OPUESTA al scroll → atacar hacia allí
+	var enemy_dir: Vector2 = Vector2.RIGHT
 	if _level_data:
-		if _level_data.scroll_direction.x < 0:
-			offset = Vector2(60, 0)  # Facing right
-		elif _level_data.scroll_direction.x > 0:
-			offset = Vector2(-60, 0)  # Facing left
-			attack.scale.x = -1
-		elif _level_data.scroll_direction.y < 0:
-			offset = Vector2(0, 60)  # Facing down
-			attack.rotation_degrees = 90
-		else:
-			offset = Vector2(0, -60)  # Facing up
-			attack.rotation_degrees = -90
-	
+		enemy_dir = -_level_data.scroll_direction.normalized()
+
+	var range_val: float = MELEE_RANGE * (1.8 if PowerUpManager.is_active("big_sword") else 1.0)
+	var offset: Vector2 = enemy_dir * range_val * 0.4
+
+	# Rotar hitbox para que mire hacia los enemigos
+	attack.rotation = enemy_dir.angle()
 	attack.position = _player.position + offset
 	_player.get_parent().add_child(attack)
 
 func _spawn_projectile() -> void:
 	var projectile: Projectile = projectile_scene.instantiate()
 	projectile.position = _player.position
-	
-	# Direction based on scroll (shoot towards where enemies come from)
+
+	# Disparar hacia donde vienen los enemigos (opuesto al scroll)
 	if _level_data:
 		projectile.direction = -_level_data.scroll_direction.normalized()
 	else:
 		projectile.direction = Vector2.RIGHT
-	
+
 	_player.get_parent().add_child(projectile)

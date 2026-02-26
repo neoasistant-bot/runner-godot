@@ -9,12 +9,12 @@ class_name EnemySpawner
 var _level_data: LevelData
 var _viewport_size: Vector2
 var _spawn_timer: float = 0.0
-var _initial_delay: float = 3.0  # No spawns for first 3 seconds
+var _initial_delay: float = 1.0  # Delay inicial reducido
 var _running: bool = false
 
 # Spawn frequency decreases (faster) with difficulty
-var _base_spawn_interval: float = 4.0
-var _min_spawn_interval: float = 1.5
+var _base_spawn_interval: float = 2.5
+var _min_spawn_interval: float = 1.0
 
 func configure(data: LevelData) -> void:
 	_level_data = data
