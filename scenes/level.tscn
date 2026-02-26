@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/level.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world_scroller.gd" id="2"]
@@ -13,6 +13,9 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/bat.tscn" id="11"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/skeleton.tscn" id="12"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/ghost.tscn" id="13"]
+[ext_resource type="Script" path="res://scripts/hazard_spawner.gd" id="14"]
+[ext_resource type="PackedScene" path="res://scenes/hazards/lightning.tscn" id="15"]
+[ext_resource type="PackedScene" path="res://scenes/hazards/shockwave.tscn" id="16"]
 
 [sub_resource type="WorldBoundaryShape2D" id="ground_boundary"]
 
@@ -50,6 +53,11 @@ slime_scene = ExtResource("10")
 bat_scene = ExtResource("11")
 skeleton_scene = ExtResource("12")
 ghost_scene = ExtResource("13")
+
+[node name="HazardSpawner" type="Node2D" parent="World"]
+script = ExtResource("14")
+lightning_scene = ExtResource("15")
+shockwave_scene = ExtResource("16")
 
 [node name="Player" parent="." instance=ExtResource("6")]
 position = Vector2(200, 930)
