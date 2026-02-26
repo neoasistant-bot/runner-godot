@@ -48,8 +48,10 @@ func _get_spawn_interval() -> float:
 	return max(interval, _min_spawn_interval)
 
 func _spawn_enemy() -> void:
+	var current_phase: int = GameManager.get_phase()
+	print("[EnemySpawner] phase=", current_phase, " xp=", GameManager.total_xp)
 	# No spawnar enemigos hasta Fase ENEMIES
-	if GameManager.get_phase() < GameManager.DifficultyPhase.ENEMIES:
+	if current_phase < GameManager.DifficultyPhase.ENEMIES:
 		return
 
 	var enemy_scene := _pick_enemy_type()

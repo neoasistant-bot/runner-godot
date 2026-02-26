@@ -56,8 +56,16 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not _enabled:
 		return
-	
-	# Detect taps (touch or click)
+
+	# Teclado: Z = melee directo, X = ranged directo
+	if event.is_action_pressed("melee_attack"):
+		_try_melee_attack()
+		return
+	if event.is_action_pressed("ranged_attack"):
+		_try_ranged_attack()
+		return
+
+	# Touch / click → lógica de tap (simple=melee, doble=ranged)
 	if event is InputEventScreenTouch and event.pressed:
 		_handle_tap()
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:

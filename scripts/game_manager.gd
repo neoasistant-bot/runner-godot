@@ -26,7 +26,7 @@ var high_score: int = 0
 var levels_completed: int = 0
 var _current_phase: int = DifficultyPhase.OBSTACLES_ONLY
 
-const PHASE_THRESHOLDS: Array[int] = [0, 30, 80, 180, 350, 600]
+const PHASE_THRESHOLDS: Array[int] = [0, 10, 25, 60, 150, 300]
 
 func _ready() -> void:
 	load_data()
