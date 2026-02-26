@@ -9,8 +9,8 @@ radius = 22.0
 [node name="Ghost" type="Area2D"]
 script = ExtResource("1")
 max_hp = 1
-speed = 200.0
-xp_value = 25
+speed = 180.0
+xp_value = 20
 immune_to_melee = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

@@ -9,8 +9,8 @@ radius = 24.0
 [node name="Slime" type="Area2D"]
 script = ExtResource("1")
 max_hp = 1
-speed = 120.0
-xp_value = 15
+speed = 110.0
+xp_value = 10
 immune_to_melee = false
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

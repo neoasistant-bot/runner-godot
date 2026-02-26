@@ -12,9 +12,9 @@ var _spawn_timer: float = 0.0
 var _initial_delay: float = 3.0  # No spawns for first 3 seconds
 var _running: bool = false
 
-# Spawn frequency decreases (faster) with difficulty
-var _base_spawn_interval: float = 4.0
-var _min_spawn_interval: float = 1.5
+# Spawn frequency — valores centralizados en BalanceConfig
+var _base_spawn_interval: float = BalanceConfig.SPAWN_INTERVAL_BASE
+var _min_spawn_interval: float = BalanceConfig.SPAWN_INTERVAL_MIN
 
 func configure(data: LevelData) -> void:
 	_level_data = data
@@ -40,7 +40,7 @@ func _process(delta: float) -> void:
 
 func _get_spawn_interval() -> float:
 	var difficulty := GameManager.get_difficulty_level()
-	var interval := _base_spawn_interval - (difficulty * 0.2)
+	var interval := _base_spawn_interval - (difficulty * BalanceConfig.SPAWN_DIFFICULTY_STEP)
 	return max(interval, _min_spawn_interval)
 
 func _spawn_enemy() -> void:

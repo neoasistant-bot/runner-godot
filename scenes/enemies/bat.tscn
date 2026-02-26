@@ -9,8 +9,8 @@ radius = 20.0
 [node name="Bat" type="Area2D"]
 script = ExtResource("1")
 max_hp = 1
-speed = 180.0
-xp_value = 20
+speed = 160.0
+xp_value = 15
 immune_to_melee = false
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
