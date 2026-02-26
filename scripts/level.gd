@@ -15,6 +15,9 @@ extends Node2D
 @onready var score_label: Label = $UI/TopBar/ScoreContainer/ScoreLabel
 @onready var distance_label: Label = $UI/TopBar/DistanceContainer/DistanceLabel
 @onready var high_score_indicator: Label = $UI/HighScoreIndicator
+@onready var power_up_panel: VBoxContainer = $UI/PowerUpPanel
+@onready var power_up_icon: Label = $UI/PowerUpPanel/PowerUpIcon
+@onready var power_up_bar: ProgressBar = $UI/PowerUpPanel/PowerUpBar
 
 var _total_distance: float = 0.0
 
@@ -90,6 +93,8 @@ func _ready() -> void:
 	GameManager.xp_changed.connect(_on_xp_changed)
 	GameManager.game_over.connect(_on_game_over)
 	GameManager.phase_changed.connect(_on_phase_changed)
+	PowerUpManager.activated.connect(_on_power_up_activated)
+	PowerUpManager.expired.connect(_on_power_up_expired)
 
 	# Start
 	world.start()
@@ -138,6 +143,30 @@ func _on_new_high_score() -> void:
 	var tween := create_tween()
 	tween.tween_property(high_score_indicator, "scale", Vector2(1.2, 1.2), 0.1)
 	tween.tween_property(high_score_indicator, "scale", Vector2(1.0, 1.0), 0.1)
+
+func _process(_delta: float) -> void:
+	if not PowerUpManager.get_active_type().is_empty():
+		power_up_bar.value = PowerUpManager.get_remaining_ratio()
+		# Parpadeo en los últimos 2s
+		var ratio: float = PowerUpManager.get_remaining_ratio()
+		if ratio < 0.2:
+			power_up_panel.modulate.a = 0.4 + 0.6 * abs(sin(Time.get_ticks_msec() * 0.01))
+		else:
+			power_up_panel.modulate.a = 1.0
+
+func _on_power_up_activated(type: String) -> void:
+	const ICONS: Dictionary = {
+		"attack_speed": "⚡ VEL. ATAQUE",
+		"big_sword": "⚔️ ESPADA+",
+		"laser": "🔵 LASER",
+	}
+	power_up_icon.text = ICONS.get(type, "★")
+	power_up_bar.value = 1.0
+	power_up_panel.visible = true
+	power_up_panel.modulate.a = 1.0
+
+func _on_power_up_expired(_type: String) -> void:
+	power_up_panel.visible = false
 
 func _on_phase_changed(phase: int) -> void:
 	var messages: Array[String] = [
