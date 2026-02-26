@@ -18,6 +18,12 @@ extends Node2D
 @onready var power_up_panel: VBoxContainer = $UI/PowerUpPanel
 @onready var power_up_icon: Label = $UI/PowerUpPanel/PowerUpIcon
 @onready var power_up_bar: ProgressBar = $UI/PowerUpPanel/PowerUpBar
+@onready var melee_bar: ProgressBar = $UI/CombatHUD/MeleeSlot/MeleeBar
+@onready var ranged_bar: ProgressBar = $UI/CombatHUD/RangedSlot/RangedBar
+@onready var melee_icon: Label = $UI/CombatHUD/MeleeSlot/MeleeIcon
+@onready var ranged_icon: Label = $UI/CombatHUD/RangedSlot/RangedIcon
+
+var _combat_controller: CombatController = null
 
 var _total_distance: float = 0.0
 
@@ -88,6 +94,9 @@ func _ready() -> void:
 	if GameManager.high_score == 0:
 		high_score_indicator.visible = false
 
+	# Obtener CombatController del player
+	_combat_controller = player.get_node_or_null("CombatController")
+
 	# Connect signals
 	world.distance_updated.connect(_on_distance_updated)
 	GameManager.xp_changed.connect(_on_xp_changed)
@@ -145,14 +154,24 @@ func _on_new_high_score() -> void:
 	tween.tween_property(high_score_indicator, "scale", Vector2(1.0, 1.0), 0.1)
 
 func _process(_delta: float) -> void:
+	# Power-up timer
 	if not PowerUpManager.get_active_type().is_empty():
 		power_up_bar.value = PowerUpManager.get_remaining_ratio()
-		# Parpadeo en los últimos 2s
 		var ratio: float = PowerUpManager.get_remaining_ratio()
 		if ratio < 0.2:
 			power_up_panel.modulate.a = 0.4 + 0.6 * abs(sin(Time.get_ticks_msec() * 0.01))
 		else:
 			power_up_panel.modulate.a = 1.0
+
+	# Combat HUD — cooldown bars (0 = listo, 1 = en cooldown)
+	if _combat_controller:
+		var m_ratio: float = _combat_controller.get_melee_cooldown_ratio()
+		var r_ratio: float = _combat_controller.get_ranged_cooldown_ratio()
+		melee_bar.value = m_ratio
+		ranged_bar.value = r_ratio
+		# Oscurecer ícono cuando está en cooldown
+		melee_icon.modulate.a = 0.4 if m_ratio > 0.0 else 1.0
+		ranged_icon.modulate.a = 0.4 if r_ratio > 0.0 else 1.0
 
 func _on_power_up_activated(type: String) -> void:
 	const ICONS: Dictionary = {

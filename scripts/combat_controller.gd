@@ -3,8 +3,8 @@ class_name CombatController
 
 ## Handles player combat: melee and ranged attacks
 
-signal melee_attacked
-signal ranged_attacked
+signal melee_attacked(cooldown: float)
+signal ranged_attacked(cooldown: float)
 
 const MELEE_COOLDOWN: float = 0.4
 const RANGED_COOLDOWN: float = 0.8
@@ -33,6 +33,14 @@ func enable() -> void:
 
 func disable() -> void:
 	_enabled = false
+
+func get_melee_cooldown_ratio() -> float:
+	var max_cd: float = MELEE_COOLDOWN * (0.5 if PowerUpManager.is_active("attack_speed") else 1.0)
+	return clamp(_melee_cooldown_timer / max_cd, 0.0, 1.0)
+
+func get_ranged_cooldown_ratio() -> float:
+	var max_cd: float = RANGED_COOLDOWN * (0.5 if PowerUpManager.is_active("attack_speed") else 1.0)
+	return clamp(_ranged_cooldown_timer / max_cd, 0.0, 1.0)
 
 func _process(delta: float) -> void:
 	# Update cooldowns
@@ -80,7 +88,7 @@ func _try_melee_attack() -> void:
 	var cooldown: float = MELEE_COOLDOWN * (0.5 if PowerUpManager.is_active("attack_speed") else 1.0)
 	_melee_cooldown_timer = cooldown
 	_spawn_melee_attack()
-	melee_attacked.emit()
+	melee_attacked.emit(cooldown)
 
 func _try_ranged_attack() -> void:
 	if _ranged_cooldown_timer > 0:
@@ -88,7 +96,7 @@ func _try_ranged_attack() -> void:
 	var cooldown: float = RANGED_COOLDOWN * (0.5 if PowerUpManager.is_active("attack_speed") else 1.0)
 	_ranged_cooldown_timer = cooldown
 	_spawn_projectile()
-	ranged_attacked.emit()
+	ranged_attacked.emit(cooldown)
 
 func _spawn_melee_attack() -> void:
 	var attack: MeleeAttack = melee_attack_scene.instantiate()

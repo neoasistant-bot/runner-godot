@@ -132,6 +132,56 @@ theme_override_font_sizes/font_size = 48
 text = "Level Name"
 horizontal_alignment = 1
 
+[node name="CombatHUD" type="HBoxContainer" parent="UI"]
+visible = true
+offset_left = 16.0
+offset_top = 980.0
+offset_right = 300.0
+offset_bottom = 1060.0
+theme_override_constants/separation = 16
+
+[node name="MeleeSlot" type="VBoxContainer" parent="UI/CombatHUD"]
+theme_override_constants/separation = 4
+
+[node name="MeleeIcon" type="Label" parent="UI/CombatHUD/MeleeSlot"]
+theme_override_font_sizes/font_size = 36
+text = "👊"
+horizontal_alignment = 1
+
+[node name="MeleeBar" type="ProgressBar" parent="UI/CombatHUD/MeleeSlot"]
+offset_right = 80.0
+offset_bottom = 10.0
+show_percentage = false
+max_value = 1.0
+value = 0.0
+
+[node name="MeleeHint" type="Label" parent="UI/CombatHUD/MeleeSlot"]
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+text = "TAP"
+horizontal_alignment = 1
+
+[node name="RangedSlot" type="VBoxContainer" parent="UI/CombatHUD"]
+theme_override_constants/separation = 4
+
+[node name="RangedIcon" type="Label" parent="UI/CombatHUD/RangedSlot"]
+theme_override_font_sizes/font_size = 36
+text = "🔮"
+horizontal_alignment = 1
+
+[node name="RangedBar" type="ProgressBar" parent="UI/CombatHUD/RangedSlot"]
+offset_right = 80.0
+offset_bottom = 10.0
+show_percentage = false
+max_value = 1.0
+value = 0.0
+
+[node name="RangedHint" type="Label" parent="UI/CombatHUD/RangedSlot"]
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+text = "2x TAP"
+horizontal_alignment = 1
+
 [node name="PowerUpPanel" type="VBoxContainer" parent="UI"]
 visible = false
 offset_left = 1750.0
