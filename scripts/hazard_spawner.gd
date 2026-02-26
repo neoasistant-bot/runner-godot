@@ -40,8 +40,8 @@ func _process(delta: float) -> void:
 
 func _pick_interval() -> float:
 	# Con más dificultad, hazards un poco más frecuentes (mínimo 6s)
-	var difficulty := GameManager.get_difficulty_level()
-	var reduction := minf(difficulty * 0.1, 2.0)
+	var difficulty: int = GameManager.get_difficulty_level()
+	var reduction: float = minf(difficulty * 0.1, 2.0)
 	return randf_range(
 		max(BASE_INTERVAL_MIN - reduction, 6.0),
 		max(BASE_INTERVAL_MAX - reduction, 8.0)
@@ -49,7 +49,7 @@ func _pick_interval() -> float:
 
 func _spawn_hazard() -> void:
 	# Solo hazards relevantes según el tipo de nivel
-	var hazard_type := _pick_hazard_type()
+	var hazard_type: String = _pick_hazard_type()
 
 	match hazard_type:
 		"lightning":

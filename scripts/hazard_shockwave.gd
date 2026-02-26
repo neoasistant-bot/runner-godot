@@ -38,7 +38,7 @@ func _process(delta: float) -> void:
 	match _phase:
 		Phase.WARNING:
 			# Pulsa la línea de warning
-			var pulse := abs(sin(_timer * 10.0))
+			var pulse: float = abs(sin(_timer * 10.0))
 			warning_line.modulate.a = 0.4 + 0.6 * pulse
 
 			if _timer >= WARNING_DURATION:
