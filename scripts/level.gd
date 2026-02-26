@@ -6,6 +6,7 @@ extends Node2D
 @onready var terrain_manager: Node2D = $World/TerrainManager
 @onready var obstacle_spawner: Node2D = $World/ObstacleSpawner
 @onready var coin_spawner: Node2D = $World/CoinSpawner
+@onready var enemy_spawner: Node2D = $World/EnemySpawner
 @onready var player: CharacterBody2D = $Player
 @onready var xp_label: Label = $UI/XPLabel
 @onready var distance_bar: ProgressBar = $UI/DistanceBar
@@ -69,6 +70,7 @@ func _ready() -> void:
 	terrain_manager.configure(level_data)
 	obstacle_spawner.configure(level_data)
 	coin_spawner.configure(level_data)
+	enemy_spawner.configure(level_data)
 
 	# Setup UI
 	distance_bar.max_value = level_distance
@@ -90,6 +92,7 @@ func _ready() -> void:
 	world.start()
 	obstacle_spawner.start()
 	coin_spawner.start()
+	enemy_spawner.start()
 
 	# Fade out level name after 2 seconds
 	var tween := create_tween()
@@ -102,6 +105,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		world.stop()
 		obstacle_spawner.stop()
 		coin_spawner.stop()
+		enemy_spawner.stop()
 		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func _on_distance_updated(total: float) -> void:
@@ -134,6 +138,7 @@ func _on_game_over() -> void:
 	world.stop()
 	obstacle_spawner.stop()
 	coin_spawner.stop()
+	enemy_spawner.stop()
 
 func _spawn_teleporter() -> void:
 	_teleporter_spawned = true

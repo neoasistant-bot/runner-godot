@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/level.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world_scroller.gd" id="2"]
@@ -8,6 +8,11 @@
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/obstacle.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/coin.tscn" id="8"]
+[ext_resource type="Script" path="res://scripts/enemy_spawner.gd" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/slime.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/bat.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/skeleton.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/ghost.tscn" id="13"]
 
 [sub_resource type="WorldBoundaryShape2D" id="ground_boundary"]
 
@@ -38,6 +43,13 @@ obstacle_scene = ExtResource("7")
 [node name="CoinSpawner" type="Node2D" parent="World"]
 script = ExtResource("5")
 coin_scene = ExtResource("8")
+
+[node name="EnemySpawner" type="Node2D" parent="World"]
+script = ExtResource("9")
+slime_scene = ExtResource("10")
+bat_scene = ExtResource("11")
+skeleton_scene = ExtResource("12")
+ghost_scene = ExtResource("13")
 
 [node name="Player" parent="." instance=ExtResource("6")]
 position = Vector2(200, 930)

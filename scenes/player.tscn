@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/kenney/Tiles/Characters/tile_0000.png" id="1"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/combat_controller.gd" id="3"]
 
 [sub_resource type="RectangleShape2D" id="standing_shape"]
 size = Vector2(56, 72)
@@ -39,5 +40,8 @@ shape = SubResource("hitbox_standing_shape")
 position = Vector2(0, 18)
 shape = SubResource("hitbox_crouching_shape")
 disabled = true
+
+[node name="CombatController" type="Node" parent="."]
+script = ExtResource("3")
 
 [connection signal="area_entered" from="HitboxArea" to="." method="_on_hitbox_area_entered"]

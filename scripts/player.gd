@@ -40,6 +40,10 @@ func configure(data: LevelData) -> void:
 		_lane_center_x = position.x
 		_current_lane = 1
 		_connect_vertical_input()
+	
+	# Configure combat controller
+	if has_node("CombatController"):
+		$CombatController.configure(data)
 
 func _connect_horizontal_input() -> void:
 	if not _dodge_positive_connected:

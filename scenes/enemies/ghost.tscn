@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/kenney/Tiles/Characters/tile_0025.png" id="2"]
+
+[sub_resource type="CircleShape2D" id="ghost_collision"]
+radius = 22.0
+
+[node name="Ghost" type="Area2D"]
+script = ExtResource("1")
+max_hp = 1
+speed = 200.0
+xp_value = 25
+immune_to_melee = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2")
+scale = Vector2(4, 4)
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("ghost_collision")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

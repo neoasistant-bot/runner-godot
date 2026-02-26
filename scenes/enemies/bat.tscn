@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_bat.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/kenney/Tiles/Characters/tile_0021.png" id="2"]
+
+[sub_resource type="CircleShape2D" id="bat_collision"]
+radius = 20.0
+
+[node name="Bat" type="Area2D"]
+script = ExtResource("1")
+max_hp = 1
+speed = 180.0
+xp_value = 20
+immune_to_melee = false
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2")
+scale = Vector2(3.5, 3.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("bat_collision")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
