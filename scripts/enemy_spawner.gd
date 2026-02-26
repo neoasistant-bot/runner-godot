@@ -23,6 +23,10 @@ func configure(data: LevelData) -> void:
 
 func start() -> void:
 	_running = true
+	GameManager.phase_changed.connect(_on_phase_changed)
+
+func _on_phase_changed(_phase: int) -> void:
+	pass  # spawn logic already checks phase per-spawn
 
 func stop() -> void:
 	_running = false
@@ -44,6 +48,10 @@ func _get_spawn_interval() -> float:
 	return max(interval, _min_spawn_interval)
 
 func _spawn_enemy() -> void:
+	# No spawnar enemigos hasta Fase ENEMIES
+	if GameManager.get_phase() < GameManager.DifficultyPhase.ENEMIES:
+		return
+
 	var enemy_scene := _pick_enemy_type()
 	if not enemy_scene:
 		return
@@ -55,33 +63,32 @@ func _spawn_enemy() -> void:
 	add_child(enemy)
 
 func _pick_enemy_type() -> PackedScene:
-	var difficulty := GameManager.get_difficulty_level()
-	var roll := randf()
-	
-	# Higher difficulty = more varied enemies
-	if difficulty < 2:
-		return slime_scene  # Only slimes early
-	elif difficulty < 5:
-		if roll < 0.6:
+	var phase: int = GameManager.get_phase()
+	var roll: float = randf()
+
+	match phase:
+		GameManager.DifficultyPhase.ENEMIES:
 			return slime_scene
-		else:
-			return bat_scene
-	elif difficulty < 10:
-		if roll < 0.4:
+		GameManager.DifficultyPhase.MIX_1:
+			return slime_scene if roll < 0.6 else bat_scene
+		GameManager.DifficultyPhase.MIX_2:
+			if roll < 0.4:
+				return slime_scene
+			elif roll < 0.7:
+				return bat_scene
+			else:
+				return skeleton_scene
+		GameManager.DifficultyPhase.FULL:
+			if roll < 0.3:
+				return slime_scene
+			elif roll < 0.5:
+				return bat_scene
+			elif roll < 0.75:
+				return skeleton_scene
+			else:
+				return ghost_scene
+		_:
 			return slime_scene
-		elif roll < 0.7:
-			return bat_scene
-		else:
-			return skeleton_scene
-	else:
-		if roll < 0.3:
-			return slime_scene
-		elif roll < 0.5:
-			return bat_scene
-		elif roll < 0.75:
-			return skeleton_scene
-		else:
-			return ghost_scene
 
 func _get_spawn_position() -> Vector2:
 	var pos := Vector2.ZERO

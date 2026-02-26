@@ -121,3 +121,10 @@ offset_bottom = 100.0
 theme_override_font_sizes/font_size = 48
 text = "Level Name"
 horizontal_alignment = 1
+
+[ext_resource type="Script" path="res://scripts/power_up_spawner.gd" id="14"]
+[ext_resource type="PackedScene" path="res://scenes/powerups/power_up_base.tscn" id="15"]
+
+[node name="PowerUpSpawner" type="Node2D" parent="World"]
+script = ExtResource("14")
+power_up_scene = ExtResource("15")

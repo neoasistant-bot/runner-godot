@@ -20,12 +20,18 @@ func _check_bounds() -> void:
 	if position.y < -50 or position.y > viewport_size.y + 50:
 		queue_free()
 
+var _hits_remaining: int = 1
+
+func _ready() -> void:
+	area_entered.connect(_on_area_entered)
+	# Laser: atraviesa hasta 3 enemigos
+	if PowerUpManager.is_active("laser"):
+		_hits_remaining = 3
+		modulate = Color(0.2, 1.0, 1.0)  # cyan
+
 func _on_area_entered(area: Area2D) -> void:
 	if area.is_in_group("enemies") and area.has_method("take_damage"):
-		area.take_damage(DAMAGE, false)  # false = ranged
-		_play_hit_effect()
-		queue_free()
-
-func _play_hit_effect() -> void:
-	# Could spawn a hit particle here
-	pass
+		area.take_damage(DAMAGE, false)
+		_hits_remaining -= 1
+		if _hits_remaining <= 0:
+			queue_free()

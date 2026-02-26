@@ -7,9 +7,11 @@ const DURATION: float = 0.2
 var _timer: float = 0.0
 
 func _ready() -> void:
-	# Connect to detect enemies
 	body_entered.connect(_on_body_entered)
 	area_entered.connect(_on_area_entered)
+	# Aplicar big_sword si está activo
+	if PowerUpManager.is_active("big_sword"):
+		scale = Vector2(1.8, 1.8)
 
 func _process(delta: float) -> void:
 	_timer += delta

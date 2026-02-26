@@ -7,6 +7,7 @@ extends Node2D
 @onready var obstacle_spawner: Node2D = $World/ObstacleSpawner
 @onready var coin_spawner: Node2D = $World/CoinSpawner
 @onready var enemy_spawner: Node2D = $World/EnemySpawner
+@onready var power_up_spawner: Node2D = $World/PowerUpSpawner
 @onready var player: CharacterBody2D = $Player
 @onready var xp_label: Label = $UI/XPLabel
 @onready var distance_bar: ProgressBar = $UI/DistanceBar
@@ -71,6 +72,7 @@ func _ready() -> void:
 	obstacle_spawner.configure(level_data)
 	coin_spawner.configure(level_data)
 	enemy_spawner.configure(level_data)
+	power_up_spawner.configure(level_data)
 
 	# Setup UI
 	distance_bar.max_value = level_distance
@@ -87,12 +89,14 @@ func _ready() -> void:
 	world.distance_updated.connect(_on_distance_updated)
 	GameManager.xp_changed.connect(_on_xp_changed)
 	GameManager.game_over.connect(_on_game_over)
+	GameManager.phase_changed.connect(_on_phase_changed)
 
 	# Start
 	world.start()
 	obstacle_spawner.start()
 	coin_spawner.start()
 	enemy_spawner.start()
+	power_up_spawner.start()
 
 	# Fade out level name after 2 seconds
 	var tween := create_tween()
@@ -106,6 +110,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		obstacle_spawner.stop()
 		coin_spawner.stop()
 		enemy_spawner.stop()
+		power_up_spawner.stop()
 		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func _on_distance_updated(total: float) -> void:
@@ -134,11 +139,28 @@ func _on_new_high_score() -> void:
 	tween.tween_property(high_score_indicator, "scale", Vector2(1.2, 1.2), 0.1)
 	tween.tween_property(high_score_indicator, "scale", Vector2(1.0, 1.0), 0.1)
 
+func _on_phase_changed(phase: int) -> void:
+	var messages: Array[String] = [
+		"",
+		"⚡ ¡Cuidado con los ataques!",
+		"👾 ¡Aparecen enemigos!",
+		"💀 ¡Más peligros!",
+		"🔥 ¡Esto se complica!",
+		"☠️ ¡Modo infernal!"
+	]
+	if phase > 0 and phase < messages.size():
+		level_name_label.text = messages[phase]
+		level_name_label.modulate.a = 1.0
+		var tween := create_tween()
+		tween.tween_interval(2.5)
+		tween.tween_property(level_name_label, "modulate:a", 0.0, 0.5)
+
 func _on_game_over() -> void:
 	world.stop()
 	obstacle_spawner.stop()
 	coin_spawner.stop()
 	enemy_spawner.stop()
+	power_up_spawner.stop()
 
 func _spawn_teleporter() -> void:
 	_teleporter_spawned = true

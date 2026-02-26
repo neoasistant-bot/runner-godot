@@ -77,16 +77,16 @@ func _handle_tap() -> void:
 func _try_melee_attack() -> void:
 	if _melee_cooldown_timer > 0:
 		return
-	
-	_melee_cooldown_timer = MELEE_COOLDOWN
+	var cooldown: float = MELEE_COOLDOWN * (0.5 if PowerUpManager.is_active("attack_speed") else 1.0)
+	_melee_cooldown_timer = cooldown
 	_spawn_melee_attack()
 	melee_attacked.emit()
 
 func _try_ranged_attack() -> void:
 	if _ranged_cooldown_timer > 0:
 		return
-	
-	_ranged_cooldown_timer = RANGED_COOLDOWN
+	var cooldown: float = RANGED_COOLDOWN * (0.5 if PowerUpManager.is_active("attack_speed") else 1.0)
+	_ranged_cooldown_timer = cooldown
 	_spawn_projectile()
 	ranged_attacked.emit()
 
