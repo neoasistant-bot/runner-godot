@@ -7,6 +7,7 @@ extends Node2D
 @onready var obstacle_spawner: Node2D = $World/ObstacleSpawner
 @onready var coin_spawner: Node2D = $World/CoinSpawner
 @onready var enemy_spawner: Node2D = $World/EnemySpawner
+@onready var power_up_spawner: Node2D = $World/PowerUpSpawner
 @onready var player: CharacterBody2D = $Player
 @onready var xp_label: Label = $UI/XPLabel
 @onready var distance_bar: ProgressBar = $UI/DistanceBar
@@ -14,6 +15,15 @@ extends Node2D
 @onready var score_label: Label = $UI/TopBar/ScoreContainer/ScoreLabel
 @onready var distance_label: Label = $UI/TopBar/DistanceContainer/DistanceLabel
 @onready var high_score_indicator: Label = $UI/HighScoreIndicator
+@onready var power_up_panel: VBoxContainer = $UI/PowerUpPanel
+@onready var power_up_icon: Label = $UI/PowerUpPanel/PowerUpIcon
+@onready var power_up_bar: ProgressBar = $UI/PowerUpPanel/PowerUpBar
+@onready var melee_bar: ProgressBar = $UI/CombatHUD/MeleeSlot/MeleeBar
+@onready var ranged_bar: ProgressBar = $UI/CombatHUD/RangedSlot/RangedBar
+@onready var melee_icon: Label = $UI/CombatHUD/MeleeSlot/MeleeIcon
+@onready var ranged_icon: Label = $UI/CombatHUD/RangedSlot/RangedIcon
+
+var _combat_controller: CombatController = null
 
 var _total_distance: float = 0.0
 
@@ -71,6 +81,7 @@ func _ready() -> void:
 	obstacle_spawner.configure(level_data)
 	coin_spawner.configure(level_data)
 	enemy_spawner.configure(level_data)
+	power_up_spawner.configure(level_data)
 
 	# Setup UI
 	distance_bar.max_value = level_distance
@@ -83,16 +94,23 @@ func _ready() -> void:
 	if GameManager.high_score == 0:
 		high_score_indicator.visible = false
 
+	# Obtener CombatController del player
+	_combat_controller = player.get_node_or_null("CombatController")
+
 	# Connect signals
 	world.distance_updated.connect(_on_distance_updated)
 	GameManager.xp_changed.connect(_on_xp_changed)
 	GameManager.game_over.connect(_on_game_over)
+	GameManager.phase_changed.connect(_on_phase_changed)
+	PowerUpManager.activated.connect(_on_power_up_activated)
+	PowerUpManager.expired.connect(_on_power_up_expired)
 
 	# Start
 	world.start()
 	obstacle_spawner.start()
 	coin_spawner.start()
 	enemy_spawner.start()
+	power_up_spawner.start()
 
 	# Fade out level name after 2 seconds
 	var tween := create_tween()
@@ -106,6 +124,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		obstacle_spawner.stop()
 		coin_spawner.stop()
 		enemy_spawner.stop()
+		power_up_spawner.stop()
 		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func _on_distance_updated(total: float) -> void:
@@ -134,11 +153,62 @@ func _on_new_high_score() -> void:
 	tween.tween_property(high_score_indicator, "scale", Vector2(1.2, 1.2), 0.1)
 	tween.tween_property(high_score_indicator, "scale", Vector2(1.0, 1.0), 0.1)
 
+func _process(_delta: float) -> void:
+	# Power-up timer
+	if not PowerUpManager.get_active_type().is_empty():
+		power_up_bar.value = PowerUpManager.get_remaining_ratio()
+		var ratio: float = PowerUpManager.get_remaining_ratio()
+		if ratio < 0.2:
+			power_up_panel.modulate.a = 0.4 + 0.6 * abs(sin(Time.get_ticks_msec() * 0.01))
+		else:
+			power_up_panel.modulate.a = 1.0
+
+	# Combat HUD — cooldown bars (0 = listo, 1 = en cooldown)
+	if _combat_controller:
+		var m_ratio: float = _combat_controller.get_melee_cooldown_ratio()
+		var r_ratio: float = _combat_controller.get_ranged_cooldown_ratio()
+		melee_bar.value = m_ratio
+		ranged_bar.value = r_ratio
+		# Oscurecer ícono cuando está en cooldown
+		melee_icon.modulate.a = 0.4 if m_ratio > 0.0 else 1.0
+		ranged_icon.modulate.a = 0.4 if r_ratio > 0.0 else 1.0
+
+func _on_power_up_activated(type: String) -> void:
+	const ICONS: Dictionary = {
+		"attack_speed": "⚡ VEL. ATAQUE",
+		"big_sword": "⚔️ ESPADA+",
+		"laser": "🔵 LASER",
+	}
+	power_up_icon.text = ICONS.get(type, "★")
+	power_up_bar.value = 1.0
+	power_up_panel.visible = true
+	power_up_panel.modulate.a = 1.0
+
+func _on_power_up_expired(_type: String) -> void:
+	power_up_panel.visible = false
+
+func _on_phase_changed(phase: int) -> void:
+	var messages: Array[String] = [
+		"",
+		"⚡ ¡Cuidado con los ataques!",
+		"👾 ¡Aparecen enemigos!",
+		"💀 ¡Más peligros!",
+		"🔥 ¡Esto se complica!",
+		"☠️ ¡Modo infernal!"
+	]
+	if phase > 0 and phase < messages.size():
+		level_name_label.text = messages[phase]
+		level_name_label.modulate.a = 1.0
+		var tween := create_tween()
+		tween.tween_interval(2.5)
+		tween.tween_property(level_name_label, "modulate:a", 0.0, 0.5)
+
 func _on_game_over() -> void:
 	world.stop()
 	obstacle_spawner.stop()
 	coin_spawner.stop()
 	enemy_spawner.stop()
+	power_up_spawner.stop()
 
 func _spawn_teleporter() -> void:
 	_teleporter_spawned = true

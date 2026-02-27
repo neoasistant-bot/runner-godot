@@ -9,12 +9,12 @@ class_name EnemySpawner
 var _level_data: LevelData
 var _viewport_size: Vector2
 var _spawn_timer: float = 0.0
-var _initial_delay: float = 3.0  # No spawns for first 3 seconds
+var _initial_delay: float = 1.0  # Delay inicial reducido
 var _running: bool = false
 
 # Spawn frequency decreases (faster) with difficulty
-var _base_spawn_interval: float = 4.0
-var _min_spawn_interval: float = 1.5
+var _base_spawn_interval: float = 2.5
+var _min_spawn_interval: float = 1.0
 
 func configure(data: LevelData) -> void:
 	_level_data = data
@@ -23,6 +23,10 @@ func configure(data: LevelData) -> void:
 
 func start() -> void:
 	_running = true
+	GameManager.phase_changed.connect(_on_phase_changed)
+
+func _on_phase_changed(_phase: int) -> void:
+	pass  # spawn logic already checks phase per-spawn
 
 func stop() -> void:
 	_running = false
@@ -44,6 +48,12 @@ func _get_spawn_interval() -> float:
 	return max(interval, _min_spawn_interval)
 
 func _spawn_enemy() -> void:
+	var current_phase: int = GameManager.get_phase()
+	print("[EnemySpawner] phase=", current_phase, " xp=", GameManager.total_xp)
+	# No spawnar enemigos hasta Fase ENEMIES
+	if current_phase < GameManager.DifficultyPhase.ENEMIES:
+		return
+
 	var enemy_scene := _pick_enemy_type()
 	if not enemy_scene:
 		return
@@ -55,33 +65,32 @@ func _spawn_enemy() -> void:
 	add_child(enemy)
 
 func _pick_enemy_type() -> PackedScene:
-	var difficulty := GameManager.get_difficulty_level()
-	var roll := randf()
-	
-	# Higher difficulty = more varied enemies
-	if difficulty < 2:
-		return slime_scene  # Only slimes early
-	elif difficulty < 5:
-		if roll < 0.6:
+	var phase: int = GameManager.get_phase()
+	var roll: float = randf()
+
+	match phase:
+		GameManager.DifficultyPhase.ENEMIES:
 			return slime_scene
-		else:
-			return bat_scene
-	elif difficulty < 10:
-		if roll < 0.4:
+		GameManager.DifficultyPhase.MIX_1:
+			return slime_scene if roll < 0.6 else bat_scene
+		GameManager.DifficultyPhase.MIX_2:
+			if roll < 0.4:
+				return slime_scene
+			elif roll < 0.7:
+				return bat_scene
+			else:
+				return skeleton_scene
+		GameManager.DifficultyPhase.FULL:
+			if roll < 0.3:
+				return slime_scene
+			elif roll < 0.5:
+				return bat_scene
+			elif roll < 0.75:
+				return skeleton_scene
+			else:
+				return ghost_scene
+		_:
 			return slime_scene
-		elif roll < 0.7:
-			return bat_scene
-		else:
-			return skeleton_scene
-	else:
-		if roll < 0.3:
-			return slime_scene
-		elif roll < 0.5:
-			return bat_scene
-		elif roll < 0.75:
-			return skeleton_scene
-		else:
-			return ghost_scene
 
 func _get_spawn_position() -> Vector2:
 	var pos := Vector2.ZERO

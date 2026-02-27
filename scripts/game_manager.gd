@@ -4,8 +4,17 @@ signal game_started
 signal game_over
 signal xp_changed(new_xp: int)
 signal level_completed
+signal phase_changed(new_phase: int)
 
 enum State { MENU, PLAYING, DEAD }
+enum DifficultyPhase {
+	OBSTACLES_ONLY,  # 0   — solo bloques
+	HAZARDS,         # 100 — + rayo/onda de choque
+	ENEMIES,         # 250 — + Slime
+	MIX_1,           # 500 — + Murciélago
+	MIX_2,           # 900 — + Esqueleto
+	FULL             # 1500 — todo + Fantasma
+}
 
 const SAVE_PATH: String = "user://savegame.save"
 const DEATH_PENALTY: float = 0.20
@@ -15,6 +24,9 @@ var total_xp: int = 0
 var session_xp: int = 0
 var high_score: int = 0
 var levels_completed: int = 0
+var _current_phase: int = DifficultyPhase.OBSTACLES_ONLY
+
+const PHASE_THRESHOLDS: Array[int] = [0, 5, 10, 30, 80, 200]
 
 func _ready() -> void:
 	load_data()
@@ -40,6 +52,7 @@ func add_xp(value: int) -> void:
 	total_xp += value
 	session_xp += value
 	xp_changed.emit(total_xp)
+	_check_phase_change()
 
 ## Player completed a level (touched teleporter)
 func complete_level(bonus: int) -> void:
@@ -52,6 +65,21 @@ func complete_level(bonus: int) -> void:
 ## Get current difficulty level (every 100 XP = 1 level)
 func get_difficulty_level() -> int:
 	return total_xp / 100
+
+## Get current difficulty phase based on total XP
+func get_phase() -> int:
+	var phase: int = DifficultyPhase.OBSTACLES_ONLY
+	for i: int in range(PHASE_THRESHOLDS.size()):
+		if total_xp >= PHASE_THRESHOLDS[i]:
+			phase = i
+	return phase
+
+## Check and emit phase_changed if phase advanced
+func _check_phase_change() -> void:
+	var new_phase: int = get_phase()
+	if new_phase != _current_phase:
+		_current_phase = new_phase
+		phase_changed.emit(_current_phase)
 
 ## Calculate level distance based on XP
 func calculate_level_distance(base: float, scale: float) -> float:

@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/power_up.gd" id="1"]
+
+[sub_resource type="CircleShape2D" id="pu_collision"]
+radius = 30.0
+
+[node name="PowerUp" type="Area2D"]
+script = ExtResource("1")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+text = "⚡"
+horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("pu_collision")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
