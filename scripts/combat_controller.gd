@@ -9,6 +9,7 @@ signal ranged_attacked(cooldown: float)
 const MELEE_COOLDOWN: float = 0.4
 const RANGED_COOLDOWN: float = 0.8
 const DOUBLE_TAP_WINDOW: float = 0.3
+const MELEE_RANGE: float = 150.0
 
 var melee_attack_scene: PackedScene = preload("res://scenes/melee_attack.tscn")
 var projectile_scene: PackedScene = preload("res://scenes/projectile.tscn")
